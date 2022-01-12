@@ -19,53 +19,7 @@ async function run() {
     const to = core.getInput('to')
     const etherValue = core.getInput('value')
     const message = core.getInput('message')
-    const contract = core.getInput('contract')
-    const functionSignature = core.getInput('function')
-    const functionInputsJSON = core.getInput('inputs')
     const gasLimit = core.getInput('gas-limit')
-
-
-    // get signature
-    let signature
-    if (signer && githubToken) {
-      const octokit = github.getOctokit(githubToken)
-      const signerRepo = signer.split('/')
-      const signatureRequest = await octokit.rest.issues.create({
-        owner: signerRepo[0],
-        repo: signerRepo[1],
-        title: "Request Signature",
-        body: JSON.stringify({
-          owner: github.context.repo.owner,
-          repo: github.context.repo.repo,
-          runId: github.context.runId
-        })
-      })
-  
-      // wait for signature
-      const interval = 10000
-      while (!signature) {
-        await new Promise(resolve => setTimeout(resolve, interval))
-  
-        const comments = await octokit.rest.issues.listComments({
-          owner: signerRepo[0],
-          repo: signerRepo[1],
-          issue_number: signatureRequest.data.number
-        })
-        comments.data.forEach(comment => {
-          try {
-            const signatureResponse = JSON.parse(comment.body)
-            if (
-              signatureResponse &&
-              signatureResponse.signature
-            ) {
-              signature = signatureResponse.signature
-            }
-          } catch (e) {
-            console.log(e)
-          }
-        })
-      }
-    }
 
     // prepare tx
     let result = null
@@ -74,25 +28,9 @@ async function run() {
       value: etherValue ? ethers.utils.parseEther(etherValue) : '0',
       data: message ? ethers.utils.hexlify(ethers.utils.toUtf8Bytes(message)) : null
     }
+
     if (gasLimit) {
       txData.gasLimit = gasLimit
-    }
-    
-    // contract interaction
-    const abiInterface = new ethers.utils.Interface([`function ${functionSignature}`])
-    const functionName = functionSignature.split('(')[0].replace(' ', '')
-
-    if (ethers.utils.isAddress(contract) && functionName) {
-      txData.to = contract
-      let functionInputs = []
-      if (functionInputsJSON) {
-        functionInputs = JSON.parse(functionInputsJSON)
-      }
-      if (signature) {
-        functionInputs.push(github.context.runId)
-        functionInputs.push(signature)
-      }
-      txData.data = abiInterface.encodeFunctionData(functionName, functionInputs)
     }
 
     // convert github user/repo to address
