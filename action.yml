@@ -1,4 +1,4 @@
-name: "@web3actions/tx"
+name: "@web3actions/ethtx"
 description: A GitHub Action to send Ethereum transactions.
 branding:
   icon: trending-up
