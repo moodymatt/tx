@@ -39822,10 +39822,14 @@ async function run() {
     const gasLimit = core.getInput('gas-limit')
 
     // prepare tx
+    core.debug('Ether value from input: ' + etherValue);
+    const parsedEtherValue = etherValue ? ethers.utils.parseEther(etherValue) : '0';
+    core.debug('Parsed Ether Value: ' + parsedEtherValue);
+
     let result = null
     let txData = {
       to,
-      value: etherValue ? ethers.utils.parseEther(etherValue) : '0',
+      value: parsedEtherValue,
       data: message ? ethers.utils.hexlify(ethers.utils.toUtf8Bytes(message)) : null
     }
 
