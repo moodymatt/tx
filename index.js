@@ -1,13 +1,10 @@
 const core = require('@actions/core')
-const github = require('@actions/github')
 const { ethers } = require('ethers')
 const { getConfig } = require('@web3actions/sdk')
 
 async function run() {
   try {
     // inputs
-    const signer = core.getInput('signer')
-    const githubToken = core.getInput('github-token')
     let rpcNode = core.getInput('rpc-node')
     const network = core.getInput('network')
     const infuraKey = core.getInput('infura-key')
@@ -55,10 +52,6 @@ async function run() {
       txData = await wallet.signTransaction(txData)
       const tx = await provider.sendTransaction(txData)
       result = await tx.wait()
-    } else {
-      // contract read (only option where there is no key required)
-      result = await provider.call(txData)
-      result = abiInterface.decodeFunctionResult(functionName, result)
     }
 
     core.info(JSON.stringify(result))
