@@ -53,6 +53,14 @@ inputs:
     description: A token to make API calls. Only required when using a signer.
     required: false
     default: null
+  contract-address:
+    description: represents the pairs address see -> https://docs.chain.link/docs/ethereum-addresses/
+    required: true
+    default: null
+  contract-decimals:
+    description: represents the pairs decimal requirements for mathing see -> https://docs.chain.link/docs/ethereum-addresses/
+    required: true
+    default: null
 outputs:
   result:
     description: The JSON encoded transaction object or return value.

@@ -24,8 +24,13 @@ The `message` field will be hex encoded data included in the transaction.
     rpc-node: ${{ secrets.RPC_NODE }}
     wallet-key: ${{ secrets.WALLET_KEY }}
     to: "0x..."
-    value: "0.01"
+    # value represents whole $ dollars
+    value: "10"
     message: "Hey!"
+    # contract-address represents the pairs address see -> https://docs.chain.link/docs/ethereum-addresses/
+    contract-address: "0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419"
+    # contract-decimals represents the pairs decimal requirements for mathing see -> https://docs.chain.link/docs/ethereum-addresses/
+    contract-decimals: "8"
 ```
 
 ### Send ETH to GitHub user/repository
@@ -38,7 +43,12 @@ This works only for users/repositories who have configured a receiving address t
     rpc-node: ${{ secrets.RPC_NODE }}
     wallet-key: ${{ secrets.WALLET_KEY }}
     to: "mktcode" # or user/repo
-    value: "0.01"
+    # value represents whole $ dollars
+    value: "10"
+    # contract-address represents the pairs address see -> https://docs.chain.link/docs/ethereum-addresses/
+    contract-address: "0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419"
+    # contract-decimals represents the pairs decimal requirements for mathing see -> https://docs.chain.link/docs/ethereum-addresses/
+    contract-decimals: "8"
 ```
 
 Repositories can configure an address (or other information) in a `web3.json` in the root directory or a `"web3"` section in a `package.json`.
