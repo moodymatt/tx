@@ -21,10 +21,6 @@ inputs:
     description: The receiving address. If provided a GitHub username or username and repo instead, the action will try to fetch the address from that repo's config.
     required: false
     default: null
-  value:
-    description: The value transferred for the transaction (in ether).
-    required: false
-    default: null
   message:
     description: Addtional data for transactions to external addresses.
     required: false
@@ -59,6 +55,10 @@ inputs:
     default: null
   contract-decimals:
     description: represents the pairs decimal requirements for mathing see -> https://docs.chain.link/docs/ethereum-addresses/
+    required: true
+    default: null
+  labels:
+    description: the labels provided on a particular pull request comma delimited
     required: true
     default: null
 outputs:

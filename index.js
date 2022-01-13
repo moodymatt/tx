@@ -15,15 +15,19 @@ async function run() {
     const provider = new ethers.providers.JsonRpcProvider(rpcNode);
     const walletKey = core.getInput("wallet-key");
     const to = core.getInput("to");
-    const desiredUsdValue = core.getInput("value", { required: true }); //TODO: this should now be USD and we should call chainlink to do the conversion
+    // const desiredUsdValue = core.getInput("value", { required: true }); //TODO: this should now be USD and we should call chainlink to do the conversion
     const message = core.getInput("message");
     const gasLimit = core.getInput("gas-limit");
+    const labels = core.getInput("labels");
     const ethUsdContractAddress = core.getInput("contract-address", {
       required: true,
     });
     const ethUsdContractDecimals = core.getInput("contract-decimals", {
       required: true,
     });
+
+    const bountyLabel = getBountyLabel(labels.split(','));
+    const desiredUsdValue = getDollarAmountFromBountyLabel(bountyLabel);
 
     // prepare tx
     core.debug("USD value from input: " + desiredUsdValue);
@@ -163,6 +167,21 @@ const getPrice = async function (rpcNode, aggregatorAddress, decimals) {
       roundData.price = Number(roundData.answer) / Math.pow(10, decimals);
       return roundData;
     });
+};
+
+const getBountyLabel = (labels) => {
+  for (let index = 0; index < labels.length; index++) {
+    const label = labels[index];
+    if (label.toUpperCase().indexOf("BOUNTY") > -1) {
+      return label;
+    }
+  }
+};
+
+const getDollarAmountFromBountyLabel = (bountyLabel) => {
+  const index = bountyLabel.indexOf("$") + 1;
+  const amount = bountyLabel.substring(index);
+  return amount;
 };
 
 run();
