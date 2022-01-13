@@ -31,7 +31,7 @@ async function run() {
     let result = null;
     let txData = {
       to,
-      value: await getEthValueFromUsdAmount(desiredUsdValue, ethUsdContractAddress, ethUsdContractDecimals, rpcNode),
+      value: await convertDesiredUsdToEthAmount(desiredUsdValue, ethUsdContractAddress, ethUsdContractDecimals, rpcNode),
       data: message
         ? ethers.utils.hexlify(ethers.utils.toUtf8Bytes(message))
         : null,
@@ -76,8 +76,8 @@ async function run() {
   }
 }
 
-const getEthValueFromUsdAmount = async (
-  usdAmount,
+const convertDesiredUsdToEthAmount = async (
+  startingUsdDenomination,
   ethUsdContractAddress,
   ethUsdContractDecimals,
   rpcNode
@@ -88,10 +88,14 @@ const getEthValueFromUsdAmount = async (
     ethUsdContractDecimals
   ); //=> returns two props { int, price } - price will have two decimal places
 
-  const ethPerUsd = 1 / ethUsdPricing.price;
-  const totalEth = ethPerUsd * usdAmount;
+  return getEthValueFromCurrentPairPrice(ethUsdPricing.price, startingUsdDenomination);
+};
 
-  return totalEth;
+const getEthValueFromCurrentPairPrice = (ethUsdPrice, usdValue) => {
+  const ethPerUsd = 1 / ethUsdPrice;
+  const totalEth = ethPerUsd * usdValue;
+  let stringifiedTotalEth = totalEth.toFixed(18);
+  return ethers.utils.parseEther(stringifiedTotalEth);
 };
 
 const getPrice = async function (rpcNode, aggregatorAddress, decimals) {
